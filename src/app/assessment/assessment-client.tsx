@@ -151,7 +151,7 @@ export function AssessmentClient() {
                     <p className="mt-2 text-sm text-muted-foreground">{result.book.bookDescription}</p>
                     <Button asChild className="mt-4" variant="default">
                         <a href={result.book.purchaseLink} target="_blank" rel="noopener noreferrer">
-                            前往誠品線上購買
+                            前往博客來購買
                         </a>
                     </Button>
                 </div>
