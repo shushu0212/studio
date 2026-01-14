@@ -11,40 +11,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const searchBooksTool = ai.defineTool(
-  {
-    name: 'searchBooks',
-    description: 'Search for books on books.com.tw',
-    inputSchema: z.object({
-      query: z.string().describe('The search query'),
-    }),
-    outputSchema: z.object({
-      results: z.array(
-        z.object({
-          title: z.string(),
-          url: z.string().url(),
-        })
-      ),
-    }),
-  },
-  async ({query}) => {
-    const url = `https://search.books.com.tw/search/query/key/${encodeURIComponent(
-      query
-    )}/cat/all`;
-    // This is a mock search. In a real application, you would fetch the URL
-    // and parse the HTML to extract search results.
-    console.log(`Searching for: ${query} at ${url}`);
-    return {
-      results: [
-        {
-          title: '人性的弱點：如何贏得友誼與影響他人（增訂版）',
-          url: 'https://www.books.com.tw/products/0010948929?sloc=main',
-        },
-      ],
-    };
-  }
-);
-
 const RecommendBooksInputSchema = z.object({
   leadershipWeakness: z
     .string()
@@ -72,10 +38,13 @@ const prompt = ai.definePrompt({
   name: 'recommendBooksPrompt',
   input: {schema: RecommendBooksInputSchema},
   output: {schema: RecommendBooksOutputSchema},
-  tools: [searchBooksTool],
-  prompt: `Based on the identified leadership weakness: "{{leadershipWeakness}}", recommend a book to help improve this weakness. Provide the book title, a brief description of the book, and a link to purchase the book on Books.com.tw.
+  prompt: `Based on the identified leadership weakness: "{{leadershipWeakness}}", recommend a book to help improve this weakness. 
 
-Use the searchBooks tool to find the book and its correct URL.
+Search on the internet for a suitable book available on Books.com.tw.
+
+Provide the book title, a brief description of the book, and a valid link to purchase the book on Books.com.tw.
+
+The purchase link must be a real, working URL on books.com.tw.
 
 Adhere to the following JSON schema: {
   "type": "object",
